@@ -1,4 +1,4 @@
--- Acme P2P InfinityFree import: schema plus Appendix A seed data
+-- Acme P2P database import: schema plus Appendix A seed data
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS=0;
 
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('1', '2014_10_12_000000_create_users_table', '1');
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('2', '2014_10_12_100000_create_password_reset_tokens_table', '1');
@@ -58,6 +58,20 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('45', '2026_11_24_
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('46', '2026_11_24_082000_allocate_po_budgets_by_line', '1');
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('47', '2026_11_24_083000_add_partially_paid_invoice_status', '1');
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('48', '2026_11_24_084000_backfill_invoice_review_and_payment_users', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('49', '2026_11_24_085000_create_jobs_table', '1');
+
+-- Table: jobs (database queue)
+CREATE TABLE IF NOT EXISTS `jobs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) unsigned NOT NULL,
+  `reserved_at` int(10) unsigned DEFAULT NULL,
+  `available_at` int(10) unsigned NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `jobs_queue_index` (`queue`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: users
 CREATE TABLE IF NOT EXISTS `users` (

@@ -13,5 +13,8 @@ if [ -z "${APP_KEY:-}" ]; then
   php artisan key:generate --force
 fi
 php artisan migrate --seed --force
+if [ "${QUEUE_CONNECTION:-database}" = "database" ]; then
+  php artisan queue:work database --sleep=3 --tries=3 --timeout=90 >/dev/null 2>&1 &
+fi
 php artisan schedule:work >/dev/null 2>&1 &
 exec "$@"
