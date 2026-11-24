@@ -30,6 +30,7 @@ DB_PASSWORD=<TiDB-password>
 MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
 CACHE_DRIVER=file
 SESSION_DRIVER=file
+SESSION_SECURE_COOKIE=true
 QUEUE_CONNECTION=sync
 ```
 
