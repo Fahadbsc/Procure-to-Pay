@@ -10,6 +10,19 @@ Laravel 10 with Blade views and MySQL. Laravel was selected for its migrations, 
 4. Run `composer install`, `php artisan key:generate`, `php artisan migrate --seed`, then `php artisan serve`.
 5. Sign in with any listed account below. Password for all seeded users is `password`.
 
+## InfinityFree shared-host deployment
+
+The free InfinityFree plan does not provide SSH, Git, Composer, or Artisan on the server. Prepare the app locally, upload it with FTP, and import `database/infinityfree_seed.sql` through phpMyAdmin.
+
+1. Create a MySQL database in the InfinityFree control panel and note its exact hostname, database name, username, and password. The free plan does not allow a remote app such as TiDB or Render to connect to this MySQL database; the Laravel app must run on the same InfinityFree account.
+2. On the local project, run `composer install --no-dev --no-interaction --prefer-dist` and `composer dump-autoload --no-dev --optimize=false`. Build frontend assets locally if needed; do not upload `node_modules`.
+3. Create a production `.env` locally with `APP_ENV=production`, `APP_DEBUG=false`, the actual `APP_URL`, the MySQL credentials from the control panel, `CACHE_DRIVER=file`, `SESSION_DRIVER=file`, and `QUEUE_CONNECTION=sync`. Use a generated `APP_KEY`. Never commit or publish this `.env`.
+4. Upload the Laravel project contents, including `vendor`, to the account's `htdocs` directory. The root `.htaccess` forwards requests to `public/`; keep Laravel's `public/.htaccess` in place. Do not upload `.git`, `node_modules`, or local log/cache contents.
+5. In phpMyAdmin, select the new app database and import `database/infinityfree_seed.sql`. This dump contains the schema, migration records, and Appendix A demo seed data, so do not run `php artisan migrate` or `db:seed` on the host.
+6. Check file permissions for `storage` and `bootstrap/cache`, then open the provided domain and test login/workflows.
+
+InfinityFree's free plan has no cron or background workers, so the scheduled 48-hour reminder command will not run there. The app's synchronous request handling and database-backed in-app notices remain available.
+
 Seed users include those accounts, plus backup approvers `depthead.backup.mum@acme.test` and `depthead.backup.blr@acme.test`, and Bengaluru IT Head, Finance Head, CFO, Store Keeper, and Accounts accounts with the matching `*.blr@acme.test` address prefix. All use password `password`.
 
 ## Data model overview
