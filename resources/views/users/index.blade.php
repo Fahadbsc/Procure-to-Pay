@@ -1,0 +1,4 @@
+@extends('layouts.app')
+@section('title','Company Users')
+@section('content')<div class="container-fluid"><div class="d-flex justify-content-between mb-4"><h3>Company Users</h3><a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a></div>
+<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Name</th><th>Email</th><th>Roles</th><th>Manager</th><th></th></tr></thead><tbody>@forelse($users as $user)<tr><td>{{ $user->name }}</td><td>{{ $user->email }}</td><td>{{ $user->roles->pluck('name')->join(', ') }}</td><td>{{ $user->manager->name ?? '-' }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ route('users.edit',$user) }}">Edit</a></td></tr>@empty<tr><td colspan="5">No users found.</td></tr>@endforelse</tbody></table></div>{{ $users->links() }}</div>@endsection
