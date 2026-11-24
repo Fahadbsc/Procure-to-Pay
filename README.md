@@ -10,6 +10,31 @@ Laravel 10 with Blade views and MySQL. Laravel was selected for its migrations, 
 4. Run `composer install`, `php artisan key:generate`, `php artisan migrate --seed`, then `php artisan serve`.
 5. Sign in with any listed account below. Password for all seeded users is `password`.
 
+## Render deployment (Docker + TiDB Cloud)
+
+Create a Render **Web Service** from this GitHub repository and select the Docker runtime. Leave the build and start commands blank so Render builds `Dockerfile` and runs its Apache entrypoint. Apache binds to Render's `PORT`; Composer installs only production dependencies while the image is built, before the service starts.
+
+Add these environment variables in Render. Generate `APP_KEY` locally with `php artisan key:generate --show`; keep the key private. In TiDB Cloud, create a dedicated empty database (for example `procure_to_pay`) for the app instead of using the `sys` system database. The container runs `php artisan migrate --seed --force` on startup.
+
+```text
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:<generated-key>
+APP_URL=https://<your-render-service>.onrender.com
+DB_CONNECTION=mysql
+DB_HOST=<TiDB-host>
+DB_PORT=4000
+DB_DATABASE=procure_to_pay
+DB_USERNAME=<TiDB-username>
+DB_PASSWORD=<TiDB-password>
+MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+QUEUE_CONNECTION=sync
+```
+
+After the first deploy, check Render logs for successful migrations and the `Listening`/Apache startup. If the service fails, share the first Laravel/PDO error line from the deploy/runtime logs, with credentials redacted.
+
 ## InfinityFree shared-host deployment
 
 The free InfinityFree plan does not provide SSH, Git, Composer, or Artisan on the server. Prepare the app locally, upload it with FTP, and import `database/infinityfree_seed.sql` through phpMyAdmin.

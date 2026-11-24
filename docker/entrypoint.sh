@@ -8,9 +8,8 @@ if [ "$APACHE_PORT" != "80" ]; then
   sed -ri "s/<VirtualHost \*:80>/<VirtualHost *:${APACHE_PORT}>/" /etc/apache2/sites-available/000-default.conf
 fi
 
-composer install --no-interaction --prefer-dist
 if [ ! -f .env ]; then cp .env.example .env; fi
-if [ -z "$APP_KEY" ]; then
+if [ -z "${APP_KEY:-}" ]; then
   php artisan key:generate --force
 fi
 php artisan migrate --seed --force

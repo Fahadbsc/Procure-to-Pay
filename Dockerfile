@@ -6,6 +6,9 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 WORKDIR /var/www/html
 COPY . .
 COPY docker/entrypoint.sh /usr/local/bin/p2p-entrypoint
-RUN chmod +x /usr/local/bin/p2p-entrypoint && chown -R www-data:www-data storage bootstrap/cache
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
+    && php artisan package:discover --ansi \
+    && chmod +x /usr/local/bin/p2p-entrypoint \
+    && chown -R www-data:www-data storage bootstrap/cache
 ENTRYPOINT ["/usr/local/bin/p2p-entrypoint"]
 CMD ["apache2-foreground"]
